@@ -1,0 +1,62 @@
+{
+  "id": "ceb21bf4-6c92-4170-815e-fd24a45e61e3",
+  "brand": "Apple",
+  "name": "Macbook Air",
+  "cpu": {
+    "brand": "AMD",
+    "name": "Ryzen 5 PRO 3500U",
+    "numberCores": 2,
+    "numberThreads": 6,
+    "minGhz": 3.236182287399811,
+    "maxGhz": 4.010313250350764
+  },
+  "ram": {
+    "value": "15",
+    "unit": 5
+  },
+  "gpus": [
+    {
+      "brand": "Nvidia",
+      "name": "RTX 2060",
+      "minGhz": 1.3843864821357004,
+      "maxGhz": 1.9093002561230024,
+      "memory": {
+        "value": "6",
+        "unit": 5
+      }
+    }
+  ],
+  "storages": [
+    {
+      "driver": 2,
+      "memory": {
+        "value": "242",
+        "unit": 5
+      }
+    },
+    {
+      "driver": 1,
+      "memory": {
+        "value": "5",
+        "unit": 6
+      }
+    }
+  ],
+  "screen": {
+    "sizeInch": 15.620611,
+    "resolution": {
+      "width": 4535,
+      "height": 2551
+    },
+    "panel": 1,
+    "multitouch": false
+  },
+  "keyboard": {
+    "layout": 3,
+    "backlist": false
+  },
+  "weightKg": 2.5722216859637337,
+  "priceUsd": 1771.4632296741302,
+  "releaseYear": 2015,
+  "updatedAt": "2020-05-26T08:09:00.177671400Z"
+}
