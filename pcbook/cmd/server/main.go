@@ -13,6 +13,7 @@ import (
 	"gitlab.com/techschool/pcbook/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/reflection"
 )
 
 func loadTLSCredentials() (credentials.TransportCredentials, error) {
@@ -62,6 +63,8 @@ func main() {
 		grpc.Creds(tlsCredentials),
 	)
 	pb.RegisterLaptopServiceServer(grpcServer, laptopServer)
+	// Register reflection service on gRPC server.
+	reflection.Register(grpcServer)
 
 	address := fmt.Sprintf("0.0.0.0:%d", *port)
 	listener, err := net.Listen("tcp", address)
