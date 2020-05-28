@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"time"
 
 	"gitlab.com/techschool/pcbook/pb"
 	"gitlab.com/techschool/pcbook/service"
@@ -44,11 +45,53 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 	return credentials.NewTLS(config), nil
 }
 
+func seedUsers(userStore service.UserStore) error {
+	err := createUser(userStore, "admin1", "secret", "admin1")
+	if err != nil {
+		return err
+	}
+
+	return createUser(userStore, "user1", "secret", "user1")
+}
+
+func createUser(userStore service.UserStore, username, password, role string) error {
+	user, err := service.NewUser(username, password, role)
+	if err != nil {
+		return err
+	}
+
+	return userStore.Save(user)
+}
+
+const (
+	secretKey     = "secret"
+	tokenDuration = 15 * time.Minute
+)
+
+func accessibleRoles() map[string][]string {
+	const laptopServicePath = "/techschool.pcbook.LaptopService/"
+
+	return map[string][]string{
+		laptopServicePath + "CreateLaptop": {"admin"},
+		laptopServicePath + "UploadImage":  {"admin"},
+	}
+
+}
+
 func main() {
 	port := flag.Int("port", 0, "the server port")
 	flag.Parse()
 
 	log.Printf("Start server on port %d", *port)
+
+	userStore := service.NewInMemoryUserStore()
+	err := seedUsers(userStore)
+	if err != nil {
+		log.Fatal("cannot seed users")
+	}
+
+	jwtManager := service.NewJWTManager(secretKey, tokenDuration)
+	authServer := service.NewAuthServer(userStore, jwtManager)
 
 	laptopStore := service.NewInMemoryLaptopStore()
 	imageStore := service.NewDiskImageStore("img")
@@ -59,9 +102,14 @@ func main() {
 		log.Fatal("cannot laod TLS credentials: ", err)
 	}
 
+	interceptor := service.NewAuthInterceptor(jwtManager, accessibleRoles())
 	grpcServer := grpc.NewServer(
 		grpc.Creds(tlsCredentials),
+		grpc.UnaryInterceptor(interceptor.Unary()),
+		grpc.StreamInterceptor(interceptor.Stream()),
 	)
+
+	pb.RegisterAuthServiceServer(grpcServer, authServer)
 	pb.RegisterLaptopServiceServer(grpcServer, laptopServer)
 	// Register reflection service on gRPC server.
 	reflection.Register(grpcServer)
