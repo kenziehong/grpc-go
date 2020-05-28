@@ -95,8 +95,9 @@ func main() {
 
 	laptopStore := service.NewInMemoryLaptopStore()
 	imageStore := service.NewDiskImageStore("img")
+	ratingStore := service.NewInMemoryRatingStore()
 
-	laptopServer := service.NewLaptopServer(laptopStore, imageStore)
+	laptopServer := service.NewLaptopServer(laptopStore, imageStore, ratingStore)
 	tlsCredentials, err := loadTLSCredentials()
 	if err != nil {
 		log.Fatal("cannot laod TLS credentials: ", err)

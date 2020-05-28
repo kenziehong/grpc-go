@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 	"time"
 
 	"gitlab.com/techschool/pcbook/client"
@@ -39,6 +40,37 @@ func testUploadImage(laptopClient *client.LaptopClient) {
 	laptop := sample.NewLaptop()
 	laptopClient.CreateLaptop(laptop)
 	laptopClient.UploadImage(laptop.GetId(), "tmp/laptop.jpg")
+}
+
+func testRateLaptop(laptopClient *client.LaptopClient) {
+	n := 3
+	laptopIDs := make([]string, n)
+
+	for i := 0; i < n; i++ {
+		laptop := sample.NewLaptop()
+		laptopIDs[i] = laptop.GetId()
+		laptopClient.CreateLaptop(laptop)
+	}
+
+	scores := make([]float64, n)
+	for {
+		fmt.Print("rate laptop (y/n)? ")
+		var answer string
+		fmt.Scan(&answer)
+
+		if strings.ToLower(answer) != "y" {
+			break
+		}
+
+		for i := 0; i < n; i++ {
+			scores[i] = sample.RandomLaptopScore()
+		}
+
+		err := laptopClient.RateLaptop(laptopIDs, scores)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func loadTLSCredentials() (credentials.TransportCredentials, error) {
@@ -115,5 +147,5 @@ func main() {
 	}
 
 	laptopClient := client.NewLaptopClient(cc2)
-	testUploadImage(laptopClient)
+	testRateLaptop(laptopClient)
 }
