@@ -46,12 +46,12 @@ func loadTLSCredentials() (credentials.TransportCredentials, error) {
 }
 
 func seedUsers(userStore service.UserStore) error {
-	err := createUser(userStore, "admin1", "secret", "admin1")
+	err := createUser(userStore, "admin1", "secret", "admin")
 	if err != nil {
 		return err
 	}
 
-	return createUser(userStore, "user1", "secret", "user1")
+	return createUser(userStore, "user1", "secret", "user")
 }
 
 func createUser(userStore service.UserStore, username, password, role string) error {

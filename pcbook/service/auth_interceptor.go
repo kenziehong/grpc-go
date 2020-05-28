@@ -42,7 +42,7 @@ func (interceptor *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 }
 
 // Stream returns a server interceptor function to authenticate and authorize stream RPC
-func (interceptor *AuthInterceptor) Stream() grpc.StreamClientInterceptor {
+func (interceptor *AuthInterceptor) Stream() grpc.StreamServerInterceptor {
 	return func(
 		srv interface{},
 		stream grpc.ServerStream,
